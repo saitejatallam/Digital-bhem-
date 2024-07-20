@@ -1,0 +1,60 @@
+def create_board():
+    return [[' ' for _ in range(3)] for _ in range(3)]
+
+def display_board(board):
+    for row in board:
+        print('|'.join(row))
+        print('-' * 5)
+
+def check_win(board, mark):
+    # Check rows, columns, and diagonals for a win
+    for row in board:
+        if all([cell == mark for cell in row]):
+            return True
+    for col in range(3):
+        if all([board[row][col] == mark for row in range(3)]):
+            return True
+    if all([board[i][i] == mark for i in range(3)]) or all([board[i][2-i] == mark for i in range(3)]):
+        return True
+    return False
+
+def check_tie(board):
+    return all([cell != ' ' for row in board for cell in row])
+
+def play_game():
+    board = create_board()
+    current_player = 'X'
+    
+    while True:
+        display_board(board)
+        
+        # Get player move
+        while True:
+            try:
+                move = int(input(f"Player {current_player}, enter your move (1-9): ")) - 1
+                if board[move // 3][move % 3] == ' ':
+                    board[move // 3][move % 3] = current_player
+                    break
+                else:
+                    print("Cell is already taken. Choose another move.")
+            except (ValueError, IndexError):
+                print("Invalid move. Enter a number between 1 and 9.")
+        
+        # Check for win or tie
+        if check_win(board, current_player):
+            display_board(board)
+            print(f"Player {current_player} wins!")
+            break
+        elif check_tie(board):
+            display_board(board)
+            print("It's a tie!")
+            break
+        
+        # Switch players
+        current_player = 'O' if current_player == 'X' else 'X'
+    
+    if input("Do you want to play again? (y/n): ").lower() == 'y':
+        play_game()
+
+# Start the game
+play_game()
